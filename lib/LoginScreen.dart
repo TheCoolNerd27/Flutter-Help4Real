@@ -18,9 +18,10 @@ class MyLoginPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
 
             children: <Widget>[
+              Image.asset('assets/images/welcome.jpg',height: MediaQuery.of(context).size.height*0.15),
               LoginForm(),
             ],
           ),
@@ -38,7 +39,8 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formkey = GlobalKey<FormState>();
-  String username, password;
+ String username,password;
+  var pass=GlobalKey<FormFieldState>();
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -47,7 +49,8 @@ class _LoginFormState extends State<LoginForm> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextFormField(
-            decoration: InputDecoration(labelText: 'Username:'),
+            decoration: InputDecoration(labelText: 'Email',icon:Icon(Icons.email),
+            ),
             validator: (value) {
               var pattern =
                   r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -64,7 +67,8 @@ class _LoginFormState extends State<LoginForm> {
             },
           ),
           TextFormField(
-            decoration: InputDecoration(labelText: 'Password:'),
+            key: pass,
+            decoration: InputDecoration(labelText: 'Password:',icon:Icon(Icons.vpn_key)),
             obscureText: true,
             validator: (value) {
               if (value.isEmpty) {
@@ -79,19 +83,62 @@ class _LoginFormState extends State<LoginForm> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal:16.0),
-           child: RaisedButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, or false
-                // otherwise.
-                if (_formkey.currentState.validate()) {
-                  // If the form is valid, check credentials then redirect
+            padding: const EdgeInsets.symmetric(vertical: 25.0,horizontal:25.0),
+           child: ButtonTheme(
+             minWidth:MediaQuery.of(context).size.width,
+             height: 40.0,
 
-                }
-              },
-              child: Text('Submit'),
-              color: Colors.blueAccent,
-            ),
+             child: Column(
+               children: <Widget>[
+                 RaisedButton(
+                    onPressed: () {
+                      // Validate returns true if the form is valid, or false
+                      // otherwise.
+                      if (_formkey.currentState.validate()) {
+                        // If the form is valid, check credentials then redirect
+                        print('Username:$username Password:$password');
+                        _formkey.currentState.reset();
+                      }
+                    },
+                    child: Text('Login'),
+                   textColor: Colors.white,
+                    color: Colors.blue,
+
+
+
+
+                  ),
+                 SizedBox( height:15.0),
+                 RaisedButton(
+                   
+                   onPressed: () {
+                     // Validate returns true if the form is valid, or false
+                     // otherwise.
+                     if (_formkey.currentState.validate()) {
+                       // OAuth Here Remove If too.
+
+                       _formkey.currentState.reset();
+                     }
+                   },
+
+                   child: Row(
+                     children: <Widget>[
+                       Image.asset('assets/images/google.png',
+                       height:30.0,width:30.0),
+                       SizedBox( width:30.0),
+                       Text('Sign in with Google'),
+                     ],
+                   ),
+                   textColor: Colors.black,
+                   color: Colors.white,
+
+
+
+
+                 ),
+               ],
+             ),
+           ),
           ),
         ],
       ),
