@@ -4,6 +4,7 @@ import 'package:help4real/LoginScreen.dart';
 import 'package:help4real/MyProfileScreen.dart';
 import 'package:help4real/PostScreen.dart';
 import 'package:help4real/SignupScreen.dart';
+//import 'package:help4real/Login.dart';
 
 void main() => runApp(MyApp());
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => MyLoginPage(),
         '/Signup':(context) =>MySignupPage(),
         '/MyProfile':(context)=>MyProfilePage(),
+        '/Signup2':(context)=>MySignupPage2(),
         '/Post':(context)=>MyPostPage()
       }
     );
@@ -67,7 +69,7 @@ class MyDrawer extends StatelessWidget{
             },
           ),
           ListTile(
-            title: Text('Signup'),
+            title: Text('Register as Organization'),
             onTap: () {
               // Update the state of the app
               // ...
@@ -75,6 +77,15 @@ class MyDrawer extends StatelessWidget{
               Navigator.pushNamed(context,'/Signup');
             },
           ),
+            ListTile(
+                title: Text('Register as Helper'),
+                onTap: () {
+                    // Update the state of the app
+                    // ...
+                    // Then close the drawer
+                    Navigator.pushNamed(context,'/Signup2');
+                },
+            ),
             ListTile(
                 title: Text('My Profile'),
                 onTap: () {
@@ -84,7 +95,7 @@ class MyDrawer extends StatelessWidget{
                     Navigator.pushNamed(context,'/MyProfile');
                 },
             ),
-            ListTile(
+           /* ListTile(
                 title: Text('New Post'),
                 onTap: () {
                     // Update the state of the app
@@ -92,7 +103,7 @@ class MyDrawer extends StatelessWidget{
                     // Then close the drawer
                     Navigator.pushNamed(context,'/Post');
                 },
-            ),
+            ),*/
         ],
       ),
     );

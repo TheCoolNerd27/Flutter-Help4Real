@@ -74,6 +74,8 @@ class _LoginFormState extends State<LoginForm> {
               if (value.isEmpty) {
                 return 'Password cannot be empty!';
               }
+              else if(value.length<8)
+                return 'Password should be atleast 8 characters long!';
 
               setState(() {
                 password = value;

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:help4real/main.dart';
 
-
-
 class MySignupPage extends StatelessWidget {
-   String title="SignUp";
-
+  String title = "Register";
 
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar:  AppBar(title: Text(title),
+      appBar: AppBar(
+        title: Text(title),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(30),
@@ -24,13 +23,57 @@ class MySignupPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Image.asset('assets/images/signup.png',height:100.0),
-              SignupForm(),
+              CircleAvatar(
+                backgroundImage: AssetImage('assets/images/signup.png'),
+                maxRadius: 60.0,
+              ),
+
+                SignupForm(),
+
+
             ],
           ),
         ),
       ),
-      drawer:MyDrawer(),
+      drawer: MyDrawer(),
+    );
+  }
+}
+class MySignupPage2 extends StatelessWidget {
+  String title = "Register";
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              CircleAvatar(
+                backgroundImage: AssetImage('assets/images/signup.png'),
+                maxRadius: 60.0,
+              ),
+              SignupForm2(),
+
+
+
+            ],
+          ),
+        ),
+      ),
+      drawer: MyDrawer(),
     );
   }
 }
@@ -41,9 +84,9 @@ class SignupForm extends StatefulWidget {
 }
 
 class _SignupFormState extends State<SignupForm> {
-  String usern,pass,confpass,name;
+  String usern, pass, confpass, name, desc, address, city, contact;
   final _formSkey = GlobalKey<FormState>();
-  var Spass=GlobalKey<FormFieldState>();
+  var Spass = GlobalKey<FormFieldState>();
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -52,11 +95,11 @@ class _SignupFormState extends State<SignupForm> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextFormField(
-            decoration: InputDecoration(labelText: 'Name:',icon:Icon(Icons.perm_identity),
+            decoration: InputDecoration(
+              labelText: 'Name:',
+              icon: Icon(Icons.perm_identity),
             ),
             validator: (value) {
-
-
               if (value.isEmpty) {
                 return 'Enter Your Name!!';
               }
@@ -67,8 +110,11 @@ class _SignupFormState extends State<SignupForm> {
               return null;
             },
           ),
+          SizedBox(height: 10.0),
           TextFormField(
-            decoration: InputDecoration(labelText: 'Email:',icon:Icon(Icons.email),
+            decoration: InputDecoration(
+              labelText: 'Email:',
+              icon: Icon(Icons.email),
             ),
             validator: (value) {
               var pattern =
@@ -85,9 +131,76 @@ class _SignupFormState extends State<SignupForm> {
               return null;
             },
           ),
+          SizedBox(height: 10.0),
+          TextFormField(
+            decoration: InputDecoration(
+                labelText: 'Address:', icon: Icon(Icons.location_on)),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please Enter the address!';
+              }
+
+              setState(() {
+                address = value;
+              });
+
+              return null;
+            },
+          ),
+          SizedBox(height: 10.0),
+          TextFormField(
+            decoration: InputDecoration(
+                labelText: 'City:', icon: Icon(Icons.location_city)),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Enter your City!';
+              }
+
+              setState(() {
+                city = value;
+              });
+
+              return null;
+            },
+          ),
+          SizedBox(height: 10.0),
+          TextFormField(
+            decoration: InputDecoration(
+                labelText: 'Description:', icon: Icon(Icons.description)),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Description is Required!';
+              }
+
+              setState(() {
+                desc = value;
+              });
+
+              return null;
+            },
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+                labelText: 'Mobile No:', icon: Icon(Icons.phone)),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Contact Details Required!';
+              } else if (value.length < 10) {
+                return 'Invalid Contact Number!';
+              }
+
+              setState(() {
+                contact = value;
+              });
+
+              return null;
+            },
+          ),
+          SizedBox(height: 10.0),
           TextFormField(
             key: Spass,
-            decoration: InputDecoration(labelText: 'Password:',icon:Icon(Icons.lock_outline)),
+            decoration: InputDecoration(
+                labelText: 'Password:', icon: Icon(Icons.lock_outline)),
             obscureText: true,
             validator: (value) {
               if (value.isEmpty) {
@@ -101,16 +214,16 @@ class _SignupFormState extends State<SignupForm> {
               return null;
             },
           ),
+          SizedBox(height: 10.0),
           TextFormField(
-            decoration: InputDecoration(labelText: 'Confirm Password:',icon:Icon(Icons.lock_outline)),
+            decoration: InputDecoration(
+                labelText: 'Confirm Password:', icon: Icon(Icons.lock_outline)),
             obscureText: true,
             validator: (value) {
-              var p=Spass.currentState.value;
-              if (value.isEmpty || value!=p) {
+              var p = Spass.currentState.value;
+              if (value.isEmpty || value != p) {
                 return 'Passwords Dont Match!';
               }
-
-
 
               setState(() {
                 confpass = value;
@@ -120,11 +233,11 @@ class _SignupFormState extends State<SignupForm> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25.0,horizontal:25.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
             child: ButtonTheme(
-              minWidth:MediaQuery.of(context).size.width,
+              minWidth: MediaQuery.of(context).size.width,
               height: 40.0,
-
               child: RaisedButton(
                 onPressed: () {
                   // Validate returns true if the form is valid, or false
@@ -138,14 +251,128 @@ class _SignupFormState extends State<SignupForm> {
                 child: Text('Submit'),
                 textColor: Colors.white,
                 color: Colors.blue,
-
-
-
-
               ),
             ),
           ),
         ],
       ),
-    );  }
+    );
+  }
+}
+
+class SignupForm2 extends StatefulWidget {
+  @override
+  _SignupForm2State createState() => _SignupForm2State();
+}
+
+class _SignupForm2State extends State<SignupForm2> {
+  String name, email, password, confirm;
+  final _fkey = GlobalKey<FormState>();
+  var _pkey = GlobalKey<FormFieldState>();
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _fkey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Name:',
+              icon: Icon(Icons.perm_identity),
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Enter Your Name!!';
+              }
+              setState(() {
+                name = value;
+              });
+
+              return null;
+            },
+          ),
+          SizedBox(height: 10.0),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Email:',
+              icon: Icon(Icons.email),
+            ),
+            validator: (value) {
+              var pattern =
+                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+              RegExp regex = new RegExp(pattern);
+
+              if (!regex.hasMatch(value)) {
+                return 'Please enter a Valid Email!';
+              }
+              setState(() {
+                email = value;
+              });
+
+              return null;
+            },
+          ),
+          SizedBox(height: 10.0),
+          TextFormField(
+            key: _pkey,
+            decoration: InputDecoration(
+                labelText: 'Password:', icon: Icon(Icons.lock_outline)),
+            obscureText: true,
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Password cannot be empty!';
+              }
+
+              setState(() {
+                password = value;
+              });
+
+              return null;
+            },
+          ),
+          SizedBox(height: 10.0),
+          TextFormField(
+            decoration: InputDecoration(
+                labelText: 'Confirm Password:', icon: Icon(Icons.lock_outline)),
+            obscureText: true,
+            validator: (value) {
+              var p = _pkey.currentState.value;
+              if (value.isEmpty || value != p) {
+                return 'Passwords Dont Match!';
+              }
+
+              setState(() {
+                confirm = value;
+              });
+
+              return null;
+            },
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
+            child: ButtonTheme(
+              minWidth: MediaQuery.of(context).size.width,
+              height: 40.0,
+              child: RaisedButton(
+                onPressed: () {
+                  // Validate returns true if the form is valid, or false
+                  // otherwise.
+                  if (_fkey.currentState.validate()) {
+                    // If the form is valid, check credentials then redirect
+                    print('Username:$email Password:$password Name:$name');
+                    _fkey.currentState.reset();
+                  }
+                },
+                child: Text('Submit'),
+                textColor: Colors.white,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
