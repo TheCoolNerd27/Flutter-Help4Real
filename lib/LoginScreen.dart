@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:help4real/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class MyLoginPage extends StatelessWidget {
   var title = 'My Login Page!';
@@ -21,7 +27,7 @@ class MyLoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: <Widget>[
-              Image.asset('assets/images/welcome.jpg',height: MediaQuery.of(context).size.height*0.15),
+              Image.asset('assets/images/Logo.png',height: MediaQuery.of(context).size.height*0.25),
               LoginForm(),
             ],
           ),
@@ -39,6 +45,9 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formkey = GlobalKey<FormState>();
+  bool _success;
+  String _userID;
+  String _userEmail;
  String username,password;
   var pass=GlobalKey<FormFieldState>();
   @override
@@ -99,7 +108,9 @@ class _LoginFormState extends State<LoginForm> {
                       if (_formkey.currentState.validate()) {
                         // If the form is valid, check credentials then redirect
                         print('Username:$username Password:$password');
+                        _signInWithEmailAndPassword();
                         _formkey.currentState.reset();
+
                       }
                     },
                     child: Text('Login'),
@@ -114,13 +125,8 @@ class _LoginFormState extends State<LoginForm> {
                  RaisedButton(
                    
                    onPressed: () {
-                     // Validate returns true if the form is valid, or false
-                     // otherwise.
-                     if (_formkey.currentState.validate()) {
-                       // OAuth Here Remove If too.
 
-                       _formkey.currentState.reset();
-                     }
+                     _signInWithGoogle();
                    },
 
                    child: Row(
@@ -146,4 +152,48 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
   }
+  void _signInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+    await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    final FirebaseUser user =
+        (await _auth.signInWithCredential(credential)).user;
+    assert(user.email != null);
+    assert(user.displayName != null);
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+    setState(() {
+      if (user != null) {
+        _success = true;
+        _userID = user.uid;
+      } else {
+        _success = false;
+      }
+    });
+  }
+
+  void _signInWithEmailAndPassword() async {
+    final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+      email: username,
+      password: password,
+    ))
+        .user;
+    if (user != null) {
+      setState(() {
+        _success = true;
+        _userEmail = user.email;
+      });
+    } else {
+      _success = false;
+    }
+  }
+
+
 }

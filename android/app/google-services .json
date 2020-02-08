@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "384058713465",
+    "firebase_url": "https://help4real-aba35.firebaseio.com",
+    "project_id": "help4real-aba35",
+    "storage_bucket": "help4real-aba35.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384058713465:android:a67d7d0eabe15a1ec37ba8",
+        "android_client_info": {
+          "package_name": "help4real.help4real"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384058713465-gi4j9a7jags7dipovt6u28crliotk9j0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfAYRKW22q7YVJzgI8-wfeQVctDWrzA0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384058713465-gi4j9a7jags7dipovt6u28crliotk9j0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
