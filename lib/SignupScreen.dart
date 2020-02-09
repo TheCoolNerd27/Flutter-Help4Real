@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:help4real/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class MySignupPage extends StatelessWidget {
   String title = "Register";
@@ -84,9 +88,10 @@ class SignupForm extends StatefulWidget {
 }
 
 class _SignupFormState extends State<SignupForm> {
-  String usern, pass, confpass, name, desc, address, city, contact;
+  String usern, pass, confpass, name, desc, address, city, contact,_userEmail;
   final _formSkey = GlobalKey<FormState>();
   var Spass = GlobalKey<FormFieldState>();
+  bool _success;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -258,6 +263,24 @@ class _SignupFormState extends State<SignupForm> {
       ),
     );
   }
+  void _registerO() async {
+    final FirebaseUser user = (await _auth.createUserWithEmailAndPassword(
+      email: usern,
+      password: pass,
+    ))
+        .user;
+    var ref=Firestore.instance.collection('Organisations').document();
+    ref.setData({"email":user.email,"Name":name,"Desc":desc,"Address":address,"City":city,"Contact":contact});
+    print('$user');
+    if (user != null) {
+      setState(() {
+        _success = true;
+        _userEmail = user.email;
+      });
+    } else {
+      _success = false;
+    }
+  }
 }
 
 class SignupForm2 extends StatefulWidget {
@@ -266,7 +289,8 @@ class SignupForm2 extends StatefulWidget {
 }
 
 class _SignupForm2State extends State<SignupForm2> {
-  String name, email, password, confirm;
+  String name, email, password, confirm,_userEmail;
+  bool _success;
   final _fkey = GlobalKey<FormState>();
   var _pkey = GlobalKey<FormFieldState>();
   @override
@@ -362,6 +386,8 @@ class _SignupForm2State extends State<SignupForm2> {
                   if (_fkey.currentState.validate()) {
                     // If the form is valid, check credentials then redirect
                     print('Username:$email Password:$password Name:$name');
+                    _registerH();
+
                     _fkey.currentState.reset();
                   }
                 },
@@ -375,4 +401,23 @@ class _SignupForm2State extends State<SignupForm2> {
       ),
     );
   }
+  void _registerH() async {
+    final FirebaseUser user = (await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    ))
+        .user;
+    var ref=Firestore.instance.collection('Helpers').document();
+    ref.setData({"email":user.email,"Name":user.displayName});
+    print('$user');
+    if (user != null) {
+      setState(() {
+        _success = true;
+        _userEmail = user.email;
+      });
+    } else {
+      _success = false;
+    }
+  }
 }
+

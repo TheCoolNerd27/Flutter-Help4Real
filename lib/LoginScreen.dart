@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:help4real/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+/*
+TODO:Shift the Signout button to the drawer;
+ */
 
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -47,6 +51,7 @@ class _LoginFormState extends State<LoginForm> {
   final _formkey = GlobalKey<FormState>();
   bool _success;
   String _userID;
+
   String _userEmail;
  String username,password;
   var pass=GlobalKey<FormFieldState>();
@@ -144,6 +149,30 @@ class _LoginFormState extends State<LoginForm> {
 
 
                  ),
+                   RaisedButton(
+
+                       onPressed: () {
+
+                          _auth.signOut();
+                          _googleSignIn.signOut();
+                           print(_auth.currentUser());
+                       },
+
+                       child: Row(
+                           children: <Widget>[
+                               Image.asset('assets/images/google.png',
+                                   height:30.0,width:30.0),
+                               SizedBox( width:30.0),
+                               Text('Sign out'),
+                           ],
+                       ),
+                       textColor: Colors.black,
+                       color: Colors.white,
+
+
+
+
+                   ),
                ],
              ),
            ),
@@ -153,30 +182,45 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
   void _signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    final FirebaseUser user =
-        (await _auth.signInWithCredential(credential)).user;
-    assert(user.email != null);
-    assert(user.displayName != null);
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
 
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(user.uid == currentUser.uid);
-    setState(() {
-      if (user != null) {
-        _success = true;
-        _userID = user.uid;
-      } else {
-        _success = false;
+
+      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final AuthResult authResult = await _auth.signInWithCredential(credential);
+
+      final FirebaseUser user =
+          (await _auth.signInWithCredential(credential)).user;
+      assert(user.email != null);
+      assert(user.displayName != null);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+      if (authResult.additionalUserInfo.isNewUser) {
+          var ref=Firestore.instance.collection('Helpers').document();
+          ref.setData({"email":user.email,"Name":user.displayName});
       }
-    });
+      else {
+          print('Welcome');
+      }
+      final FirebaseUser currentUser = await _auth.currentUser();
+      assert(user.uid == currentUser.uid);
+      setState(() {
+        if (user != null) {
+          _success = true;
+          _userID = user.uid;
+        } else {
+          _success = false;
+        }
+      });
+      print('$user');
+
+
+
+
   }
 
   void _signInWithEmailAndPassword() async {

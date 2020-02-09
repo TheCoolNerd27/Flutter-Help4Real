@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "384058713465-oh9b0p21umon1k6214nad1bonsjff8jj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "help4real.help4real",
+            "certificate_hash": "65865985d1f2c74942284aac4e2b35f44af4333b"
+          }
+        },
+        {
           "client_id": "384058713465-gi4j9a7jags7dipovt6u28crliotk9j0.apps.googleusercontent.com",
           "client_type": 3
         }
