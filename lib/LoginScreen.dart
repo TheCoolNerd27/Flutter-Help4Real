@@ -3,6 +3,11 @@ import 'package:help4real/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:help4real/HomeScreen.dart';
+import 'package:help4real/LoginScreen.dart';
+import 'package:help4real/MyProfileScreen.dart';
+import 'package:help4real/PostScreen.dart';
+import 'package:help4real/SignupScreen.dart';
 /*
 TODO:Shift the Signout button to the drawer;
  */
@@ -149,30 +154,30 @@ class _LoginFormState extends State<LoginForm> {
 
 
                  ),
-                   RaisedButton(
-
-                       onPressed: () {
-
-                          _auth.signOut();
-                          _googleSignIn.signOut();
-                           print(_auth.currentUser());
-                       },
-
-                       child: Row(
-                           children: <Widget>[
-                               Image.asset('assets/images/google.png',
-                                   height:30.0,width:30.0),
-                               SizedBox( width:30.0),
-                               Text('Sign out'),
-                           ],
-                       ),
-                       textColor: Colors.black,
-                       color: Colors.white,
-
-
-
-
-                   ),
+//                   RaisedButton(
+//
+//                       onPressed: () {
+//                           print(_googleSignIn.currentUser);
+//                          _auth.signOut();
+//                          _googleSignIn.signOut();
+//                           print(_auth.currentUser());
+//                       },
+//
+//                       child: Row(
+//                           children: <Widget>[
+//                               Image.asset('assets/images/google.png',
+//                                   height:30.0,width:30.0),
+//                               SizedBox( width:30.0),
+//                               Text('Sign out'),
+//                           ],
+//                       ),
+//                       textColor: Colors.black,
+//                       color: Colors.white,
+//
+//
+//
+//
+//                   ),
                ],
              ),
            ),
@@ -240,4 +245,107 @@ class _LoginFormState extends State<LoginForm> {
   }
 
 
+}
+
+class MyDrawer extends StatelessWidget{
+    void signOut() async{
+
+
+        print(_googleSignIn.currentUser);
+        await _auth.signOut();
+        _googleSignIn.signOut();
+
+
+    }
+    @override
+    Widget build(BuildContext context) {
+        return Drawer(
+            // Add a ListView to the drawer. This ensures the user can scroll
+            // through the options in the drawer if there isn't enough vertical
+            // space to fit everything.
+            child: ListView(
+                // Important: Remove any padding from the ListView.
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                    DrawerHeader(
+
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            image:DecorationImage(
+                                fit: BoxFit.fill,
+                                image:  AssetImage('assets/images/drawer_header_background.png'))
+
+                        ),
+                        child: Stack(children: <Widget>[
+                            Positioned(
+                                bottom: 12.0,
+                                left: 16.0,
+                                child: Text("Help4Real",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w500))),
+                        ]))
+                    ,
+                    ListTile(
+                        leading: Icon(Icons.dashboard),
+                        title: Text('Dashboard'),
+                        onTap: () {
+                            // Update the state of the app
+                            // ...
+                            // Then close the drawer
+                            Navigator.pushNamed(context,'/');
+                        },
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.input),
+                        title: Text('Login'),
+                        onTap: () {
+                            // Update the state of the app
+                            // ...
+                            // Then close the drawer
+                            Navigator.pushNamed(context,'/login');
+                        },
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.domain),
+                        title: Text('Register as Organization'),
+                        onTap: () {
+                            // Update the state of the app
+                            // ...
+                            // Then close the drawer
+                            Navigator.pushNamed(context,'/Signup');
+                        },
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.group_add),
+                        title: Text('Register as Helper'),
+                        onTap: () {
+                            // Update the state of the app
+                            // ...
+                            // Then close the drawer
+                            Navigator.pushNamed(context,'/Signup2');
+                        },
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.person),
+                        title: Text('My Profile'),
+                        onTap: () {
+                            // Update the state of the app
+                            // ...
+                            // Then close the drawer
+                            Navigator.pushNamed(context,'/MyProfile');
+                        },
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.power_settings_new),
+                        title: Text('Sign Out'),
+                        onTap: () {
+                            signOut();
+                        },
+                    ),
+                ],
+            ),
+        );
+    }
 }

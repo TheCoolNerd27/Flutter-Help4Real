@@ -53,6 +53,9 @@ flutter:
     - assets/images/signup.png
     - assets/Teddy.flr
     - assets/images/Logo.png
+    - assets/images/drawer_header_background.png
+
+
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
