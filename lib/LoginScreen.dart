@@ -9,7 +9,7 @@ import 'package:help4real/MyProfileScreen.dart';
 import 'package:help4real/PostScreen.dart';
 import 'package:help4real/SignupScreen.dart';
 /*
-TODO:Shift the Signout button to the drawer;
+TODO:Pass user details to other pages as well
  */
 
 
@@ -338,12 +338,20 @@ class MyDrawer extends StatelessWidget{
                         },
                     ),
                     ListTile(
+                        leading: Icon(Icons.fiber_new),
+                        title: Text('Post'),
+                        onTap: () {
+                            Navigator.pushNamed(context,'/Post');
+                        },
+                    ),
+                    ListTile(
                         leading: Icon(Icons.power_settings_new),
                         title: Text('Sign Out'),
                         onTap: () {
                             signOut();
                         },
                     ),
+
                 ],
             ),
         );
