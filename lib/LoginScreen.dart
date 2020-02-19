@@ -15,6 +15,7 @@ TODO:Pass user details to other pages as well
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
+bool service;
 
 class MyLoginPage extends StatelessWidget {
   var title = 'My Login Page!';
@@ -215,39 +216,82 @@ class _LoginFormState extends State<LoginForm> {
       assert(user.uid == currentUser.uid);
       setState(() {
         if (user != null) {
-          _success = true;
-          _userID = user.uid;
+            setState(() {
+                _success = true;
+                _userID = user.uid;
+
+
+            });
+            print('$user');
+            service=true;
         } else {
-          _success = false;
+            setState(() {
+                _success = false;
+            });
+
         }
       });
-      print('$user');
+
 
 
 
 
   }
 
-  void _signInWithEmailAndPassword() async {
-    final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
-      email: username,
-      password: password,
-    ))
-        .user;
+  Future<void> _signInWithEmailAndPassword() async {
+      FirebaseUser user;
+      try {
+           user = (await _auth.signInWithEmailAndPassword(
+              email: username,
+              password: password,
+          ))
+              .user;
+      }
+      catch(e)
+      {
+          return showDialog<void>(
+              context: context,
+              barrierDismissible: true, // user must tap button!
+              builder: (BuildContext context) {
+                  return AlertDialog(
+                      title: Text('Invalid Username or Password!'),
+                      content: Text('Common Try Harder!'),
+                      actions: <Widget>[
+                  FlatButton(
+                  child: Text('Okay!'),
+                  onPressed: () {
+                  Navigator.of(context).pop();
+                  })
+                      ],
+                  );
+              }
+          );
+
+      }
     if (user != null) {
       setState(() {
         _success = true;
         _userEmail = user.email;
+
       });
+      service=false;
     } else {
       _success = false;
     }
   }
 
 
-}
 
+}
 class MyDrawer extends StatelessWidget{
+
+
+    Future<FirebaseUser> getUSer()async{
+        FirebaseUser udf=await _auth.currentUser();
+        return udf;
+
+    }
+
     void signOut() async{
 
 
@@ -315,6 +359,7 @@ class MyDrawer extends StatelessWidget{
                             // ...
                             // Then close the drawer
                             Navigator.pushNamed(context,'/Signup');
+                            getUSer();
                         },
                     ),
                     ListTile(
@@ -330,7 +375,7 @@ class MyDrawer extends StatelessWidget{
                     ListTile(
                         leading: Icon(Icons.person),
                         title: Text('My Profile'),
-                        onTap: () {
+                        onTap: () async{
                             // Update the state of the app
                             // ...
                             // Then close the drawer

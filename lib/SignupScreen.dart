@@ -137,6 +137,7 @@ class _SignupFormState extends State<SignupForm> {
               return null;
             },
           ),
+
           SizedBox(height: 10.0),
           TextFormField(
             decoration: InputDecoration(
@@ -251,6 +252,7 @@ class _SignupFormState extends State<SignupForm> {
                   if (_formSkey.currentState.validate()) {
                     // If the form is valid, check credentials then redirect
                     print('Username:$usern Password:$pass Name:$name');
+                    _registerO();
                     _formSkey.currentState.reset();
                   }
                 },
