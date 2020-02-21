@@ -9,7 +9,7 @@ import 'package:help4real/MyProfileScreen.dart';
 import 'package:help4real/PostScreen.dart';
 import 'package:help4real/SignupScreen.dart';
 /*
-"Displaying Posts on Dashboard"
+
 TODO:Remove Post tab from Drawer
  */
 
