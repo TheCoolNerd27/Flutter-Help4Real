@@ -272,7 +272,7 @@ class _SignupFormState extends State<SignupForm> {
       password: pass,
     ))
         .user;
-    var ref=Firestore.instance.collection('Organisations').document();
+    var ref=Firestore.instance.collection('Organisations').document(user.uid);
     ref.setData({"email":user.email,"Name":name,"Desc":desc,"Address":address,"City":city,"Contact":contact});
     print('$user');
     if (user != null) {
@@ -410,7 +410,7 @@ class _SignupForm2State extends State<SignupForm2> {
       password: password,
     ))
         .user;
-    var ref=Firestore.instance.collection('Helpers').document();
+    var ref=Firestore.instance.collection('Helpers').document(user.uid);
     ref.setData({"email":user.email,"Name":user.displayName});
     print('$user');
     if (user != null) {

@@ -51,7 +51,7 @@ class _PostFormState extends State<PostForm> {
   File _image;
   String caption, tags;
   FirebaseUser Fuser;
-  String name;
+  String name,uid;
   MyDrawer obj = new MyDrawer();
   @override
   void initState() {
@@ -62,7 +62,16 @@ class _PostFormState extends State<PostForm> {
       udf = await obj.getUSer();
       setState(() {
         Fuser = udf;
-        name=udf.displayName;
+
+      });
+      var ref2=await Firestore.instance.collection('Organisations')
+          .document(Fuser.uid).get()
+          .then((data){
+        setState(() {
+          uid=Fuser.uid;
+          name=data['Name'].toString();
+        });
+
       });
     });
   }
@@ -75,7 +84,7 @@ class _PostFormState extends State<PostForm> {
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
+//          CropAspectRatioPreset.original,
           CropAspectRatioPreset.ratio4x3,
           CropAspectRatioPreset.ratio16x9
         ],
@@ -83,7 +92,7 @@ class _PostFormState extends State<PostForm> {
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.blue,
             toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
+            initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: false),
         iosUiSettings: IOSUiSettings(
           minimumAspectRatio: 1.0,
@@ -110,14 +119,8 @@ class _PostFormState extends State<PostForm> {
     print('IMAGE:$downloadUrl');
     var ref=Firestore.instance.collection('Posts').document();
     String uid,name;
-    var ref2=await Firestore.instance.collection('Organisations')
-        .where("email", isEqualTo: Fuser.email).getDocuments()
-        .then((data){
-        data.documents.forEach((doc)async{
-          uid=doc.documentID;
-          name=await doc['Name'];
-        });
-        });
+
+
 
 
 
@@ -139,9 +142,10 @@ class _PostFormState extends State<PostForm> {
               ListTile(
 
                 leading: CircleAvatar(
+                   // backgroundColor: Colors.orange,
 
 
-                   // backgroundImage: NetworkImage(Fuser.providerId!='firebase'?Fuser.photoUrl:''),
+                    backgroundImage: AssetImage('assets/images/user.png'),
                 ),
                   title: Text('$name'),
 
@@ -166,19 +170,17 @@ class _PostFormState extends State<PostForm> {
                           });
                         },
                       ),
-
-                      (_image != null
-                          ? Image.asset(_image.path,height: MediaQuery.of(context).size.height*0.3)
-                          : ButtonTheme(
+			//TODO:Change Image.asset to FileImage(File,{Scale:}) 
+                      Container(
                         height: MediaQuery.of(context).size.height*0.3,
+                        child: (_image != null
+                            ? Image.file(_image)
+                            : FlatButton(onPressed: () {
+                          pick();
+                        },
+                                child: Text('Pick an image'))
 
-                            child: FlatButton(onPressed: () {
-                        pick();
-                      },
-                                child: Text('Pick an image')),
-
-                          )
-
+                        ),
                       ),
                     ],
                   ),
@@ -231,6 +233,9 @@ class _PostFormState extends State<PostForm> {
                           // If the form is valid, check credentials then redirect
                          upload();
                           _formk.currentState.reset();
+                          setState(() {
+                            _image=null;
+                          });
                         }
                       },
                       child: Text('Post'),

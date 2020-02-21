@@ -29,6 +29,7 @@ class MyLoginPage extends StatelessWidget {
           bottom: Radius.circular(30),
     ),
     ),
+
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -55,7 +56,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formkey = GlobalKey<FormState>();
-  bool _success;
+  bool _success,isHelp=true;
   String _userID;
 
   String _userEmail;
@@ -206,7 +207,7 @@ class _LoginFormState extends State<LoginForm> {
       assert(!user.isAnonymous);
       assert(await user.getIdToken() != null);
       if (authResult.additionalUserInfo.isNewUser) {
-          var ref=Firestore.instance.collection('Helpers').document();
+          var ref=Firestore.instance.collection('Helpers').document(user.uid);
           ref.setData({"email":user.email,"Name":user.displayName});
       }
       else {
@@ -236,6 +237,20 @@ class _LoginFormState extends State<LoginForm> {
 
 
 
+  }
+
+  Future<bool> isOrg()
+  async{
+      var ref2=await Firestore.instance.collection('Organisations')
+          .document(_userID).get()
+          .then((data){
+              if(data==null)
+          setState(() {
+             isHelp=true;
+          });
+
+      });
+      return isHelp;
   }
 
   Future<void> _signInWithEmailAndPassword() async {
@@ -283,14 +298,14 @@ class _LoginFormState extends State<LoginForm> {
 
 
 }
-class MyDrawer extends StatelessWidget{
-
+class MyDrawer extends StatelessWidget {
 
     Future<FirebaseUser> getUSer()async{
         FirebaseUser udf=await _auth.currentUser();
         return udf;
 
     }
+
 
     void signOut() async{
 
@@ -301,8 +316,11 @@ class MyDrawer extends StatelessWidget{
 
 
     }
+
+
     @override
     Widget build(BuildContext context) {
+
         return Drawer(
             // Add a ListView to the drawer. This ensures the user can scroll
             // through the options in the drawer if there isn't enough vertical
@@ -389,6 +407,7 @@ class MyDrawer extends StatelessWidget{
                             Navigator.pushNamed(context,'/Post');
                         },
                     ),
+
                     ListTile(
                         leading: Icon(Icons.power_settings_new),
                         title: Text('Sign Out'),
