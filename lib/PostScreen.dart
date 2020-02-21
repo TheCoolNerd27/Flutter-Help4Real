@@ -65,15 +65,18 @@ class _PostFormState extends State<PostForm> {
 
       });
       var ref2=await Firestore.instance.collection('Organisations')
-          .document(Fuser.uid).get()
-          .then((data){
+          .document(Fuser.uid);
+      ref2.get().then((data) async{
+
         setState(() {
           uid=Fuser.uid;
           name=data['Name'].toString();
+
         });
 
       });
     });
+
   }
 
   void pick() async {
@@ -118,7 +121,6 @@ class _PostFormState extends State<PostForm> {
     String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
     print('IMAGE:$downloadUrl');
     var ref=Firestore.instance.collection('Posts').document();
-    String uid,name;
 
 
 
@@ -231,11 +233,14 @@ class _PostFormState extends State<PostForm> {
                         // otherwise.
                         if (_formk.currentState.validate()) {
                           // If the form is valid, check credentials then redirect
-                         upload();
-                          _formk.currentState.reset();
-                          setState(() {
-                            _image=null;
-                          });
+
+                            upload();
+                            _formk.currentState.reset();
+                            setState(() {
+                              _image=null;
+                            });
+
+
                         }
                       },
                       child: Text('Post'),
