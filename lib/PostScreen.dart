@@ -30,11 +30,9 @@ class MyPostPage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PostForm(),
-        ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: PostForm(),
       ),
       drawer: MyDrawer(),
     );
@@ -50,6 +48,7 @@ class _PostFormState extends State<PostForm> {
   final _formk = GlobalKey<FormState>();
   File _image;
   String caption, tags;
+  var tagList;
   FirebaseUser Fuser;
   String name,uid;
   MyDrawer obj = new MyDrawer();
@@ -129,131 +128,135 @@ class _PostFormState extends State<PostForm> {
 
 
 
-    ref.setData({"URL":downloadUrl,"caption":caption,"uid":Fuser.uid,"uname":'$name',"tags":tags});
+    ref.setData({"URL":downloadUrl,"caption":caption,"uid":Fuser.uid,"uname":'$name',"tags":tagList});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formk,
-      child: Container(
+    return SingleChildScrollView(
+      child: Form(
+        key: _formk,
+        child: Container(
 
-        child: Column(
+          child: Column(
 
-          children: <Widget>[
-              ListTile(
+            children: <Widget>[
+                ListTile(
 
-                leading: CircleAvatar(
-                   // backgroundColor: Colors.orange,
-
-
-                    backgroundImage: AssetImage('assets/images/user.png'),
-                ),
-                  title: Text('$name'),
-
-              ),
-            Divider(
-              thickness: 0.5,
-            ),
+                  leading: CircleAvatar(
+                     // backgroundColor: Colors.orange,
 
 
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                  width:MediaQuery.of(context).size.width*1 ,
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        trailing: Icon(Icons.cancel),
-                        onTap:(){
-                          setState(() {
-                            _image=null;
-                          });
-                        },
-                      ),
-			//TODO:Change Image.asset to FileImage(File,{Scale:}) 
-                      Container(
-                        height: MediaQuery.of(context).size.height*0.3,
-                        child: (_image != null
-                            ? Image.file(_image)
-                            : FlatButton(onPressed: () {
-                          pick();
-                        },
-                                child: Text('Pick an image'))
-
-                        ),
-                      ),
-                    ],
+                      backgroundImage: AssetImage('assets/images/user.png'),
                   ),
-
-
+                    title: Text('$name'),
 
                 ),
+              Divider(
+                thickness: 0.5,
+              ),
 
-                TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'Description:', icon: Icon(Icons.description)),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Description is Required!';
-                    }
 
-                    setState(() {
-                      caption = value;
-                    });
-
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'Tags:', icon: Icon(Icons.label)),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Tags are Required!';
-                    }
-
-                    setState(() {
-                      tags = value;
-                    });
-
-                    return null;
-                  },
-                ),
-                Padding(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
-                  child: ButtonTheme(
-                    minWidth: MediaQuery.of(context).size.width,
-                    height: 40.0,
-                    child: RaisedButton(
-                      onPressed: () {
-                        // Validate returns true if the form is valid, or false
-                        // otherwise.
-                        if (_formk.currentState.validate()) {
-                          // If the form is valid, check credentials then redirect
-
-                            upload();
-                            _formk.currentState.reset();
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Container(
+                    width:MediaQuery.of(context).size.width*1 ,
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                          trailing: Icon(Icons.cancel),
+                          onTap:(){
                             setState(() {
                               _image=null;
                             });
+                          },
+                        ),
+			//TODO:Change Image.asset to FileImage(File,{Scale:}) 
+                        Container(
+                          height: MediaQuery.of(context).size.height*0.3,
+                          child: (_image != null
+                              ? Image.file(_image)
+                              : FlatButton(onPressed: () {
+                            pick();
+                          },
+                                  child: Text('Pick an image'))
+
+                          ),
+                        ),
+                      ],
+                    ),
 
 
-                        }
-                      },
-                      child: Text('Post'),
-                      textColor: Colors.white,
-                      color: Colors.blue,
+
+                  ),
+
+                  TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Description:', icon: Icon(Icons.description)),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Description is Required!';
+                      }
+
+                      setState(() {
+                        caption = value;
+                      });
+
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Tags:', icon: Icon(Icons.label)),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Tags are Required!';
+                      }
+
+                      setState(() {
+                       
+                        tagList= value.split(',');
+                      });
+                      
+
+                      return null;
+                    },
+                  ),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 25.0, horizontal: 25.0),
+                    child: ButtonTheme(
+                      minWidth: MediaQuery.of(context).size.width,
+                      height: 40.0,
+                      child: RaisedButton(
+                        onPressed: () {
+                          // Validate returns true if the form is valid, or false
+                          // otherwise.
+                          if (_formk.currentState.validate()) {
+                            // If the form is valid, check credentials then redirect
+
+                              upload();
+                              _formk.currentState.reset();
+                              setState(() {
+                                _image=null;
+                              });
+
+
+                          }
+                        },
+                        child: Text('Post'),
+                        textColor: Colors.white,
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
 
-          ],
+            ],
+          ),
         ),
       ),
     );
