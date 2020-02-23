@@ -215,12 +215,11 @@ class _SearchState extends State<Search> {
                                                         children: <Widget>[
 
                                                             ListTile(
-                                                                leading:Icon(Icons.label),
-                                                                title: Text("${doc['tags']}",
-                                                                    style: TextStyle(color: Colors.black.withOpacity(0.5)))),
-                                                            ListTile(
                                                                 leading:Icon(Icons.description),
-                                                                title: Text("${doc['caption']}")),
+                                    title: Text("${doc['caption']}"),
+                                                                subtitle: Text("${doc['tags']}",
+                                                                    style: TextStyle(color: Colors.black.withOpacity(0.5)))),
+
                                                         ],
                                                     ),
 
