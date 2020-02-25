@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:help4real/PostScreen.dart';
 import 'package:help4real/MyProfileScreen.dart';
-//final FirebaseAuth _auth = FirebaseAuth.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 //TODO:Create Abstract class of Auth service to access everywhere
 class MyHomePage extends StatefulWidget {
   final String title;
