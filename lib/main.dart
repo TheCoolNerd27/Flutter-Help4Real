@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
         '/MyProfile':(context)=>MyProfilePage(),
         '/Signup2':(context)=>MySignupPage2(),
         '/Post':(context)=>MyPostPage()
-      }
+      },
+
     );
 
   }

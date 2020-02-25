@@ -51,10 +51,23 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ),
       ),
-      body: Center(child: Text('My Profile Page!')),
+      body: Profile(),
       drawer:MyDrawer(),
 
     );
 
+  }
+}
+class Profile extends StatefulWidget {
+  @override
+  _ProfileState createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(child: Text('My Profile Page!')),
+    );
   }
 }

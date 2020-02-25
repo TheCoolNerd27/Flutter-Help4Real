@@ -100,144 +100,168 @@ class _SignupFormState extends State<SignupForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Name:',
-              icon: Icon(Icons.perm_identity),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Name:',
+                icon: Icon(Icons.perm_identity),
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Enter Your Name!!';
+                }
+                setState(() {
+                  name = value;
+                });
+
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Enter Your Name!!';
-              }
-              setState(() {
-                name = value;
-              });
-
-              return null;
-            },
           ),
           SizedBox(height: 10.0),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Email:',
-              icon: Icon(Icons.email),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Email:',
+                icon: Icon(Icons.email),
+              ),
+              validator: (value) {
+                var pattern =
+                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                RegExp regex = new RegExp(pattern);
+
+                if (!regex.hasMatch(value)) {
+                  return 'Please enter a Valid Email!';
+                }
+                setState(() {
+                  usern = value;
+                });
+
+                return null;
+              },
             ),
-            validator: (value) {
-              var pattern =
-                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-              RegExp regex = new RegExp(pattern);
-
-              if (!regex.hasMatch(value)) {
-                return 'Please enter a Valid Email!';
-              }
-              setState(() {
-                usern = value;
-              });
-
-              return null;
-            },
           ),
 
           SizedBox(height: 10.0),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: 'Address:', icon: Icon(Icons.location_on)),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please Enter the address!';
-              }
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'Address:', icon: Icon(Icons.location_on)),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please Enter the address!';
+                }
 
-              setState(() {
-                address = value;
-              });
+                setState(() {
+                  address = value;
+                });
 
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
           SizedBox(height: 10.0),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: 'City:', icon: Icon(Icons.location_city)),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Enter your City!';
-              }
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'City:', icon: Icon(Icons.location_city)),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Enter your City!';
+                }
 
-              setState(() {
-                city = value;
-              });
+                setState(() {
+                  city = value;
+                });
 
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
           SizedBox(height: 10.0),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: 'Description:', icon: Icon(Icons.description)),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Description is Required!';
-              }
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'Description:', icon: Icon(Icons.description)),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Description is Required!';
+                }
 
-              setState(() {
-                desc = value;
-              });
+                setState(() {
+                  desc = value;
+                });
 
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: 'Mobile No:', icon: Icon(Icons.phone)),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Contact Details Required!';
-              } else if (value.length < 10) {
-                return 'Invalid Contact Number!';
-              }
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'Mobile No:', icon: Icon(Icons.phone)),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Contact Details Required!';
+                } else if (value.length < 10) {
+                  return 'Invalid Contact Number!';
+                }
 
-              setState(() {
-                contact = value;
-              });
+                setState(() {
+                  contact = value;
+                });
 
-              return null;
-            },
-          ),
-          SizedBox(height: 10.0),
-          TextFormField(
-            key: Spass,
-            decoration: InputDecoration(
-                labelText: 'Password:', icon: Icon(Icons.lock_outline)),
-            obscureText: true,
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Password cannot be empty!';
-              }
-
-              setState(() {
-                pass = value;
-              });
-
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
           SizedBox(height: 10.0),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: 'Confirm Password:', icon: Icon(Icons.lock_outline)),
-            obscureText: true,
-            validator: (value) {
-              var p = Spass.currentState.value;
-              if (value.isEmpty || value != p) {
-                return 'Passwords Dont Match!';
-              }
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              key: Spass,
+              decoration: InputDecoration(
+                  labelText: 'Password:', icon: Icon(Icons.lock_outline)),
+              obscureText: true,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Password cannot be empty!';
+                }
 
-              setState(() {
-                confpass = value;
-              });
+                setState(() {
+                  pass = value;
+                });
 
-              return null;
-            },
+                return null;
+              },
+            ),
+          ),
+          SizedBox(height: 10.0),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'Confirm Password:', icon: Icon(Icons.lock_outline)),
+              obscureText: true,
+              validator: (value) {
+                var p = Spass.currentState.value;
+                if (value.isEmpty || value != p) {
+                  return 'Passwords Dont Match!';
+                }
+
+                setState(() {
+                  confpass = value;
+                });
+
+                return null;
+              },
+            ),
           ),
           Padding(
             padding:
@@ -303,78 +327,91 @@ class _SignupForm2State extends State<SignupForm2> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Name:',
-              icon: Icon(Icons.perm_identity),
+          Container(
+            width: MediaQuery.of(context).size.width*0.8,
+            child: TextFormField(
+              
+              decoration: InputDecoration(
+                labelText: 'Name:',
+                icon: Icon(Icons.perm_identity),
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Enter Your Name!!';
+                }
+                setState(() {
+                  name = value;
+                });
+
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Enter Your Name!!';
-              }
-              setState(() {
-                name = value;
-              });
-
-              return null;
-            },
           ),
           SizedBox(height: 10.0),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Email:',
-              icon: Icon(Icons.email),
+          Container(
+            width: MediaQuery.of(context).size.width*0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Email:',
+                icon: Icon(Icons.email),
+              ),
+              validator: (value) {
+                var pattern =
+                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                RegExp regex = new RegExp(pattern);
+
+                if (!regex.hasMatch(value)) {
+                  return 'Please enter a Valid Email!';
+                }
+                setState(() {
+                  email = value;
+                });
+
+                return null;
+              },
             ),
-            validator: (value) {
-              var pattern =
-                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-              RegExp regex = new RegExp(pattern);
-
-              if (!regex.hasMatch(value)) {
-                return 'Please enter a Valid Email!';
-              }
-              setState(() {
-                email = value;
-              });
-
-              return null;
-            },
           ),
           SizedBox(height: 10.0),
-          TextFormField(
-            key: _pkey,
-            decoration: InputDecoration(
-                labelText: 'Password:', icon: Icon(Icons.lock_outline)),
-            obscureText: true,
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Password cannot be empty!';
-              }
+          Container(
+            width: MediaQuery.of(context).size.width*0.8,
+            child: TextFormField(
+              key: _pkey,
+              decoration: InputDecoration(
+                  labelText: 'Password:', icon: Icon(Icons.lock_outline)),
+              obscureText: true,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Password cannot be empty!';
+                }
 
-              setState(() {
-                password = value;
-              });
+                setState(() {
+                  password = value;
+                });
 
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
           SizedBox(height: 10.0),
-          TextFormField(
-            decoration: InputDecoration(
-                labelText: 'Confirm Password:', icon: Icon(Icons.lock_outline)),
-            obscureText: true,
-            validator: (value) {
-              var p = _pkey.currentState.value;
-              if (value.isEmpty || value != p) {
-                return 'Passwords Dont Match!';
-              }
+          Container(
+            width: MediaQuery.of(context).size.width*0.8,
+            child: TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'Confirm Password:', icon: Icon(Icons.lock_outline)),
+              obscureText: true,
+              validator: (value) {
+                var p = _pkey.currentState.value;
+                if (value.isEmpty || value != p) {
+                  return 'Passwords Dont Match!';
+                }
 
-              setState(() {
-                confirm = value;
-              });
+                setState(() {
+                  confirm = value;
+                });
 
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
           Padding(
             padding:

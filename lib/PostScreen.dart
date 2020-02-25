@@ -63,7 +63,7 @@ class _PostFormState extends State<PostForm> {
         Fuser = udf;
 
       });
-      var ref2=await Firestore.instance.collection('Organisations')
+      var ref2=Firestore.instance.collection('Organisations')
           .document(Fuser.uid);
       ref2.get().then((data) async{
 

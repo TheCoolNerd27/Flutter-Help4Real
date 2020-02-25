@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:help4real/main.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:help4real/HomeScreen.dart';
-import 'package:help4real/LoginScreen.dart';
-import 'package:help4real/MyProfileScreen.dart';
-import 'package:help4real/PostScreen.dart';
-import 'package:help4real/SignupScreen.dart';
+
 /*
 
 TODO:Remove Post tab from Drawer
@@ -58,9 +54,9 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _formkey = GlobalKey<FormState>();
   bool _success,isHelp=true;
-  String _userID;
+  FirebaseUser usern;
 
-  String _userEmail;
+  String _userID;
  String username,password;
   var pass=GlobalKey<FormFieldState>();
   @override
@@ -69,42 +65,49 @@ class _LoginFormState extends State<LoginForm> {
       key: _formkey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        
         children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Email',icon:Icon(Icons.email),
+          SizedBox(
+              width: MediaQuery.of(context).size.width,
+            child: TextFormField(
+              decoration: InputDecoration(labelText: 'Email',icon:Icon(Icons.email),
+              ),
+              validator: (value) {
+                var pattern =
+                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                RegExp regex = new RegExp(pattern);
+
+                if (!regex.hasMatch(value)) {
+                  return 'Please enter a Valid Email!';
+                }
+                setState(() {
+                  username = value;
+                });
+
+                return null;
+              },
             ),
-            validator: (value) {
-              var pattern =
-                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-              RegExp regex = new RegExp(pattern);
-
-              if (!regex.hasMatch(value)) {
-                return 'Please enter a Valid Email!';
-              }
-              setState(() {
-                username = value;
-              });
-
-              return null;
-            },
           ),
-          TextFormField(
-            key: pass,
-            decoration: InputDecoration(labelText: 'Password:',icon:Icon(Icons.vpn_key)),
-            obscureText: true,
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Password cannot be empty!';
-              }
-              else if(value.length<8)
-                return 'Password should be atleast 8 characters long!';
+          SizedBox(
+              width: MediaQuery.of(context).size.width,
+            child: TextFormField(
+              key: pass,
+              decoration: InputDecoration(labelText: 'Password:',icon:Icon(Icons.vpn_key)),
+              obscureText: true,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Password cannot be empty!';
+                }
+                else if(value.length<8)
+                  return 'Password should be atleast 8 characters long!';
 
-              setState(() {
-                password = value;
-              });
+                setState(() {
+                  password = value;
+                });
 
-              return null;
-            },
+                return null;
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 25.0,horizontal:25.0),
@@ -134,7 +137,8 @@ class _LoginFormState extends State<LoginForm> {
 
 
                   ),
-                 SizedBox( height:15.0),
+                 SizedBox( height:15.0,
+                     width: MediaQuery.of(context).size.width,),
                  RaisedButton(
                    
                    onPressed: () {
@@ -220,8 +224,8 @@ class _LoginFormState extends State<LoginForm> {
         if (user != null) {
             setState(() {
                 _success = true;
-                _userID = user.uid;
-
+                usern = user;
+                _userID=user.uid;
 
             });
             print('$user');
@@ -240,19 +244,7 @@ class _LoginFormState extends State<LoginForm> {
 
   }
 
-  Future<bool> isOrg()
-  async{
-      var ref2=await Firestore.instance.collection('Organisations')
-          .document(_userID).get()
-          .then((data){
-              if(data==null)
-          setState(() {
-             isHelp=true;
-          });
 
-      });
-      return isHelp;
-  }
 
   Future<void> _signInWithEmailAndPassword() async {
       FirebaseUser user;
@@ -287,7 +279,8 @@ class _LoginFormState extends State<LoginForm> {
     if (user != null) {
       setState(() {
         _success = true;
-        _userEmail = user.email;
+        _userID = user.uid;
+        usern=user;
 
       });
       service=false;
@@ -299,13 +292,47 @@ class _LoginFormState extends State<LoginForm> {
 
 
 }
-class MyDrawer extends StatelessWidget {
-
+class MyDrawer extends StatefulWidget {
     Future<FirebaseUser> getUSer()async{
         FirebaseUser udf=await _auth.currentUser();
         return udf;
 
     }
+    
+  @override
+  _MyDrawerState createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+    MyDrawer obj=new MyDrawer();
+    FirebaseUser user;
+    String name;
+    @override
+    void initState() {
+    // TODO: implement initState
+    super.initState();
+
+
+
+    _auth.onAuthStateChanged.listen((us)async{
+
+
+        setState(() {
+            user= us;
+        });
+
+
+        var ref2 = Firestore.instance.collection('Organisations')
+            .document(user.uid);
+        ref2.get().then((data) {
+            setState(() {
+                name = data['Name'].toString();
+            });
+        });
+
+    });
+
+  }
 
 
     void signOut() async{
@@ -317,7 +344,6 @@ class MyDrawer extends StatelessWidget {
 
 
     }
-
 
     @override
     Widget build(BuildContext context) {
@@ -341,14 +367,28 @@ class MyDrawer extends StatelessWidget {
                         ),
                         child: Stack(children: <Widget>[
                             Positioned(
-                                bottom: 12.0,
-                                left: 16.0,
-                                child: Text("Help4Real",
+                                bottom: 8.0,
+                                left: 18.0,
+                                right: 0.0,
+                                child: (user!=null && name!=null?ListTile(
+                                    leading: CircleAvatar(
+                                        backgroundImage: (user.providerData[1].providerId!='google')?
+                                        AssetImage('assets/images/user.png'):NetworkImage(user.photoUrl),
+                                    ),
+                                    title: Text((user.providerData[1].providerId!='google')?'$name':'${user.displayName}',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w500),),
+
+                                ):Text("Help4Real",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.0,
-                                        fontWeight: FontWeight.w500))),
-                        ]))
+                                        fontWeight: FontWeight.w500))
+                                ),
+                            ),
+                        ],),)
                     ,
                     ListTile(
                         leading: Icon(Icons.dashboard),
@@ -378,7 +418,7 @@ class MyDrawer extends StatelessWidget {
                             // ...
                             // Then close the drawer
                             Navigator.pushNamed(context,'/Signup');
-                            getUSer();
+                            obj.getUSer();
                         },
                     ),
                     ListTile(
