@@ -58,7 +58,7 @@ class _PostFormState extends State<PostForm> {
 
     FirebaseUser udf;
     _auth.onAuthStateChanged.listen((_auth) async {
-      udf = await obj.getUSer();
+      udf = await obj.getUser();
       setState(() {
         Fuser = udf;
 

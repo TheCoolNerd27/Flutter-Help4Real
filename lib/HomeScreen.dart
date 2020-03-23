@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:help4real/main.dart';
+//import 'package:help4real/main.dart';
 import 'package:help4real/LoginScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 import 'package:help4real/PostScreen.dart';
 import 'package:help4real/MyProfileScreen.dart';
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import 'package:help4real/service_locator.dart';
+import 'package:help4real/auth_service.dart';
+//final FirebaseAuth _auth = FirebaseAuth.instance;
+final AuthenticationService _authenticationService =
+locator<AuthenticationService>();
 //TODO:Create Abstract class of Auth service to access everywhere
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -30,9 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Container(
       child: Dashboard(),
     ),
-    Container(
-      child: Search(),
-    ),
+    Search(),
     (isHelp?Profile():PostForm())
   ];
   void _onItemTapped(int index) {
@@ -44,13 +46,19 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _auth.onAuthStateChanged.listen((user) async{
+    auth.onAuthStateChanged.listen((user) async{
 
         FirebaseUser udf;
-        udf=await obj.getUSer();
+        udf=await _authenticationService.getUSer();
         setState(() {
             user= udf;
         });
+        if(user==null)
+            {
+                setState(() {
+                  isHelp=true;
+                });
+            }
         var ref2=await Firestore.instance.collection('Organisations')
             .document(user.uid).get()
             .then((data){
@@ -221,7 +229,7 @@ class _SearchState extends State<Search> {
           default:
             return Expanded(
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
+
                 child: new ListView(
                   children: snapshot.data.documents.map((DocumentSnapshot doc) {
                     return new Card(

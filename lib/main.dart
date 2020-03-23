@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:help4real/HomeScreen.dart';
 import 'package:help4real/LoginScreen.dart';
-
+import 'package:help4real/service_locator.dart';
 import 'package:help4real/MyProfileScreen.dart';
 import 'package:help4real/PostScreen.dart';
 import 'package:help4real/SignupScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 //import 'package:help4real/Login.dart';
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = GoogleSignIn();
-void main() => runApp(MyApp());
+
+void main(){
+  setupLocator();
+  runApp(MyApp());
+
+}
 
 class MyApp extends StatelessWidget {
   final appTitle = 'Help 4 Real';

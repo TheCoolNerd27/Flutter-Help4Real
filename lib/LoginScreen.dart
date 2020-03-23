@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:help4real/service_locator.dart';
+import 'package:help4real/auth_service.dart';
 
 /*
 
 TODO:Remove Post tab from Drawer
  */
 
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = GoogleSignIn();
+final AuthenticationService _authenticationService =
+locator<AuthenticationService>();
+//final FirebaseAuth _auth = FirebaseAuth.instance;
+//final GoogleSignIn _googleSignIn = GoogleSignIn();
 bool service;
 
 class MyLoginPage extends StatelessWidget {
@@ -124,7 +127,7 @@ class _LoginFormState extends State<LoginForm> {
                       if (_formkey.currentState.validate()) {
                         // If the form is valid, check credentials then redirect
                         print('Username:$username Password:$password');
-                        _signInWithEmailAndPassword();
+                        signInWithEP();
                         _formkey.currentState.reset();
 
                       }
@@ -143,7 +146,7 @@ class _LoginFormState extends State<LoginForm> {
                    
                    onPressed: () {
 
-                     _signInWithGoogle();
+                       googleSignIn();
                    },
 
                    child: Row(
@@ -161,30 +164,7 @@ class _LoginFormState extends State<LoginForm> {
 
 
                  ),
-//                   RaisedButton(
-//
-//                       onPressed: () {
-//                           print(_googleSignIn.currentUser);
-//                          _auth.signOut();
-//                          _googleSignIn.signOut();
-//                           print(_auth.currentUser());
-//                       },
-//
-//                       child: Row(
-//                           children: <Widget>[
-//                               Image.asset('assets/images/google.png',
-//                                   height:30.0,width:30.0),
-//                               SizedBox( width:30.0),
-//                               Text('Sign out'),
-//                           ],
-//                       ),
-//                       textColor: Colors.black,
-//                       color: Colors.white,
-//
-//
-//
-//
-//                   ),
+
                ],
              ),
            ),
@@ -193,7 +173,7 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
   }
-  void _signInWithGoogle() async {
+/*  void _signInWithGoogle() async {
 
 
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
@@ -287,14 +267,96 @@ class _LoginFormState extends State<LoginForm> {
     } else {
       _success = false;
     }
-  }
+  }*/
+
+void signInWithEP()
+async{
+    var res=await _authenticationService.loginWithEmail(email: username, password: password);
+    if(res is bool)
+        {
+            if(!res)
+                {
+                    return showDialog<void>(
+                        context: context,
+                        barrierDismissible: true, // user must tap button!
+                        builder: (BuildContext context) {
+                            return AlertDialog(
+                                title: Text('Sign In Failed'),
+                                content: Text('Incorrect Username or Password!!'),
+                                actions: <Widget>[
+                                    FlatButton(
+                                        child: Text('Okay!'),
+                                        onPressed: () {
+                                            Navigator.of(context).pop();
+                                        })
+                                ],
+                            );
+                        }
+                    );
+
+
+                }
+        }
+    else
+        return showDialog<void>(
+            context: context,
+            barrierDismissible: true, // user must tap button!
+            builder: (BuildContext context) {
+                return AlertDialog(
+                    title: Text('Sign In Failure'),
+                    content: Text('$res'),
+                    actions: <Widget>[
+                        FlatButton(
+                            child: Text('Okay!'),
+                            onPressed: () {
+                                Navigator.of(context).pop();
+                            })
+                    ],
+                );
+            }
+        );
+
+
+}
+
+void googleSignIn()
+async{
+    var usr;
+    var res=await _authenticationService.signInWithGoogle();
+    if(res is bool)
+        {
+            if(res)
+                {
+                  usr=_authenticationService.getUSer();
+                 setState(() {
+                     if (usr != null) {
+                         setState(() {
+                             _success = true;
+                             usern = usr;
+                             _userID=usr.uid;
+
+                         });
+                         print('$usern');
+                         service=true;
+                     } else {
+                         setState(() {
+                             _success = false;
+                         });
+
+                     }
+                 });
+                }
+
+        }
+
+}
 
 
 
 }
 class MyDrawer extends StatefulWidget {
-    Future<FirebaseUser> getUSer()async{
-        FirebaseUser udf=await _auth.currentUser();
+    Future<FirebaseUser> getUser()async{
+        FirebaseUser udf=await _authenticationService.getUSer();
         return udf;
 
     }
@@ -314,7 +376,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
 
 
-    _auth.onAuthStateChanged.listen((us)async{
+    auth.onAuthStateChanged.listen((us)async{
 
 
         setState(() {
@@ -335,15 +397,15 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
 
-    void signOut() async{
-
-
-        print(_googleSignIn.currentUser);
-        await _auth.signOut();
-        _googleSignIn.signOut();
-
-
-    }
+//    void signOut() async{
+//
+//
+//        print(_googleSignIn.currentUser);
+//        await _auth.signOut();
+//        _googleSignIn.signOut();
+//
+//
+//    }
 
     @override
     Widget build(BuildContext context) {
@@ -418,7 +480,7 @@ class _MyDrawerState extends State<MyDrawer> {
                             // ...
                             // Then close the drawer
                             Navigator.pushNamed(context,'/Signup');
-                            obj.getUSer();
+                            obj.getUser();
                         },
                     ),
                     ListTile(
@@ -453,7 +515,7 @@ class _MyDrawerState extends State<MyDrawer> {
                         leading: Icon(Icons.power_settings_new),
                         title: Text('Sign Out'),
                         onTap: () {
-                            signOut();
+                            _authenticationService.signOut();//signOut();
                         },
                     ),
 
