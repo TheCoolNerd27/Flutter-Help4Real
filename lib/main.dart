@@ -5,7 +5,7 @@ import 'package:help4real/service_locator.dart';
 import 'package:help4real/MyProfileScreen.dart';
 import 'package:help4real/PostScreen.dart';
 import 'package:help4real/SignupScreen.dart';
-
+import 'package:help4real/Entries.dart';
 //import 'package:help4real/Login.dart';
 
 void main(){
@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
         '/Signup':(context) =>MySignupPage(),
         '/MyProfile':(context)=>MyProfilePage(),
         '/Signup2':(context)=>MySignupPage2(),
-        '/Post':(context)=>MyPostPage()
+        '/Post':(context)=>MyPostPage(),
+        '/Directory':(context)=>Entries(),
       },
 
     );

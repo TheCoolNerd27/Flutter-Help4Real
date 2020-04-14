@@ -369,6 +369,7 @@ class _MyDrawerState extends State<MyDrawer> {
     MyDrawer obj=new MyDrawer();
     FirebaseUser user;
     String name;
+    static bool isHelp=true;
     @override
     void initState() {
     // TODO: implement initState
@@ -382,6 +383,14 @@ class _MyDrawerState extends State<MyDrawer> {
         setState(() {
             user= us;
         });
+        FirebaseUser udf;
+        udf=await _authenticationService.getUSer();
+        if(udf==null)
+        {
+            setState(() {
+                isHelp=true;
+            });
+        }
 
 
         var ref2 = Firestore.instance.collection('Organisations')
@@ -390,6 +399,14 @@ class _MyDrawerState extends State<MyDrawer> {
             setState(() {
                 name = data['Name'].toString();
             });
+            if(data==null)
+                setState(() {
+                    isHelp=true;
+                });
+            else
+                setState(() {
+                    isHelp=false;
+                });
         });
 
     });
@@ -518,6 +535,13 @@ class _MyDrawerState extends State<MyDrawer> {
                             _authenticationService.signOut();//signOut();
                         },
                     ),
+                    (isHelp?Container():ListTile(
+                        leading: Icon(Icons.store_mall_directory),
+                        title: Text('Directory'),
+                        onTap: () {
+                            Navigator.pushNamed(context,'/Directory');
+                        },
+                    ))
 
                 ],
             ),
