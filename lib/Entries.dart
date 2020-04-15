@@ -14,8 +14,8 @@ class Entries extends StatefulWidget {
 class _EntriesState extends State<Entries> {
   final _formKey = GlobalKey<FormState>();
   String name, reason, inTime;
-
-  bool isLoaded = false;
+  bool isLoaded = false,search=false;
+  String tagF;
 
   Future<Widget> entryForm(BuildContext context) {
     return showDialog(
@@ -172,147 +172,172 @@ class _EntriesState extends State<Entries> {
           ),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: <Widget>[
-          StreamBuilder(
-            stream: Firestore.instance
-                .collection("Entries")
-                .orderBy("In-Time", descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                    child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.orange)));
-              } else {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                   //header: Text("Entries Log"),
-                   columns: <DataColumn>[
-                     DataColumn(
-                       label: Text("Name"),
-                       numeric: false,
-                     ),
-                     DataColumn(
-                       label: Text("Reason of Arrival"),
-                       numeric: false,
-                     ),
-                     DataColumn(
-                       label: Text("In-Time"),
-                       numeric: false,
-                     ),
-                     DataColumn(
-                       label: Text("Out-Time"),
-                       numeric: false,
-                     ),
-                   ],
-                   //rowsPerPage: PaginatedDataTable.defaultRowsPerPage,
+          TextField(
+            decoration: InputDecoration(
+                labelText: 'Search Entries:', icon: Icon(Icons.label),
+                hintText: "(Case Sensitive)"
 
-                   rows: _createRows(snapshot.data),
-                    ),
-                );
-              }
+            ),
+
+            onSubmitted: (value) {
+              setState(() {
+                tagF = value;
+                search=true;
+              });
             },
           ),
-          RaisedButton(
-              child:Text("Add Entry"),
-              onPressed:()=> showDialog(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(borderRadius:BorderRadius.all(Radius.circular(8.0))),
-                  title: Container(
 
-                      color: Colors.blue,
-                      padding: EdgeInsets.all(10.0),
-                      height: 50.0,
-                      child: Center(child: Text("Add New Entry!"))),
-                  contentPadding: EdgeInsets.all(0.0),
-                  titlePadding:EdgeInsets.all(0.0) ,
-                  content: Container(
-                    height: 275.0,
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
+          Container(
+            margin: EdgeInsets.only(top:60.0,bottom: 55.0),
+            child: SingleChildScrollView(
+              child: StreamBuilder(
+                stream: (search?Firestore.instance
+                    .collection("Entries").where("Name",isGreaterThanOrEqualTo: tagF)
+                    .snapshots():Firestore.instance
+                    .collection("Entries")
+                    .orderBy("In-Time", descending: true)
+                    .snapshots()),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                        child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange)));
+                  } else {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                       //header: Text("Entries Log"),
+                       columns: <DataColumn>[
+                         DataColumn(
+                           label: Text("Name"),
+                           numeric: false,
+                         ),
+                         DataColumn(
+                           label: Text("Reason of Arrival"),
+                           numeric: false,
+                         ),
+                         DataColumn(
+                           label: Text("In-Time"),
+                           numeric: false,
+                         ),
+                         DataColumn(
+                           label: Text("Out-Time"),
+                           numeric: false,
+                         ),
+                       ],
+                       //rowsPerPage: PaginatedDataTable.defaultRowsPerPage,
 
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                decoration: InputDecoration(labelText: 'Name:'),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Name cannot be empty!';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  setState(() {
-                                    name = value;
-                                  });
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                decoration:
-                                InputDecoration(labelText: 'Reason of Arrival'),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please Provide a Reason of Arrival!';
-                                  }
+                       rows: _createRows(snapshot.data),
+                        ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+          Align(
+            alignment: FractionalOffset.bottomCenter,
+            child: RaisedButton(
+                child:Text("Add Entry"),
+                onPressed:()=> showDialog(
+                context: context,
+                barrierDismissible: true,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius:BorderRadius.all(Radius.circular(8.0))),
+                    title: Container(
 
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  setState(() {
-                                    reason = value;
-                                  });
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                readOnly: true,
-                                decoration: InputDecoration(
-                                  hintText: DateFormat('dd MMM kk:mm').format(
-                                      DateTime.fromMillisecondsSinceEpoch(int.parse(
-                                          DateTime.now()
-                                              .millisecondsSinceEpoch
-                                              .toString()))),
-                                ),
-                                onSaved: (value) {
-                                  setState(() {
-                                    inTime =
-                                        DateTime.now().millisecondsSinceEpoch.toString();
-                                  });
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: RaisedButton(
-                                  child: Text("Submit"),
-                                  onPressed: () {
-                                    if (_formKey.currentState.validate()) {
-                                      _formKey.currentState.save();
-                                      onSubmit();
-                                      _formKey.currentState.reset();
+                        color: Colors.blue,
+                        padding: EdgeInsets.all(10.0),
+                        height: 50.0,
+                        child: Center(child: Text("Add New Entry!"))),
+                    contentPadding: EdgeInsets.all(0.0),
+                    titlePadding:EdgeInsets.all(0.0) ,
+                    content: Container(
+                      height: 275.0,
+                      child: SingleChildScrollView(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  decoration: InputDecoration(labelText: 'Name:'),
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Name cannot be empty!';
                                     }
-                                  }),
-                            ),
-                          ],
+                                    return null;
+                                  },
+                                  onSaved: (value) {
+                                    setState(() {
+                                      name = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  decoration:
+                                  InputDecoration(labelText: 'Reason of Arrival'),
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Please Provide a Reason of Arrival!';
+                                    }
+
+                                    return null;
+                                  },
+                                  onSaved: (value) {
+                                    setState(() {
+                                      reason = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    hintText: DateFormat('dd MMM kk:mm').format(
+                                        DateTime.fromMillisecondsSinceEpoch(int.parse(
+                                            DateTime.now()
+                                                .millisecondsSinceEpoch
+                                                .toString()))),
+                                  ),
+                                  onSaved: (value) {
+                                    setState(() {
+                                      inTime =
+                                          DateTime.now().millisecondsSinceEpoch.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: RaisedButton(
+                                    child: Text("Submit"),
+                                    onPressed: () {
+                                      if (_formKey.currentState.validate()) {
+                                        _formKey.currentState.save();
+                                        onSubmit();
+                                        _formKey.currentState.reset();
+                                      }
+                                    }),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }))
+                  );
+                })),
+          )
         ],
       ),
     );
